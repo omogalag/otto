@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTTO</title>
+  <link rel="icon" href="data:image/svg+xml,
+  <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
+  <text y=%22.9em%22 font-size=%2290%22>🤖</text>
+  </svg>">
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8e0ea;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #eef4ff;
+      --success: #166534;
+      --wafe: #25d366;
+      --wafe-dark: #128c7e;
+      --wafe-soft: #e8f7df;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fa 100%);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .hero, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .anchor-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card { padding: 22px; }
+    .card h2, .card h3 { margin: 0 0 14px; }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin: -4px 0 0;
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      background: white;
+      color: var(--text);
+    }
+
+    textarea { resize: vertical; }
+
+    .activities {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .activity-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fcfdff;
+    }
+
+    .activity-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: #cbd5e1;
+      border-radius: 999px;
+      transition: .25s;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      bottom: 3px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+      transition: .25s;
+    }
+
+    .switch input:checked + .slider { background: var(--primary); }
+    .switch input:checked + .slider:before { transform: translateX(22px); }
+
+    .buttons, .emoji-buttons, .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .buttons { margin-top: 18px; }
+
+    button, .link-btn {
+      border: 1px solid #ccd5e1;
+      background: white;
+      color: var(--text);
+      border-radius: 14px;
+      padding: 11px 15px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+    }
+
+    button:hover, .link-btn:hover { transform: translateY(-1px); }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+
+    .soft {
+      background: var(--soft);
+      color: #1e3a8a;
+      border-color: #d7e5ff;
+    }
+
+    .wafe-btn {
+      background: linear-gradient(180deg, #31dc73 0%, #25d366 100%);
+      color: #08361d;
+      border-color: #25d366;
+    }
+
+    .output {
+      min-height: 280px;
+      white-space: pre-wrap;
+      background: #0f172a;
+      color: #e5eefc;
+      border-radius: 16px;
+      padding: 18px;
+      font-family: Consolas, Monaco, monospace;
+      line-height: 1.55;
+      overflow-x: auto;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 12px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .tool-card {
+      border: 1px solid #cfe9d5;
+      background: linear-gradient(180deg, #fcfffd 0%, #f4fbf6 100%);
+    }
+
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tool-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #e9f9ee;
+      color: #0f5132;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border: 1px solid #cbe9d4;
+    }
+
+        .wafe-wrap {
+      display: none;
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .wafe-wrap.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .wafe-pane {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: white;
+    }
+
+    .toolbar, .emoji-buttons { margin-bottom: 12px; }
+
+    .emoji-btn {
+      min-width: 42px;
+      min-height: 42px;
+      padding: 8px;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    #editor {
+      min-height: 350px;
+      line-height: 1.6;
+    }
+
+    .preview-shell {
+      background: #ece6dd;
+      border-radius: 24px;
+      min-height: 420px;
+      padding: 16px;
+    }
+
+    .preview-bubble {
+      background: var(--wafe-soft);
+      border-radius: 22px;
+      padding: 16px;
+      min-height: 320px;
+      max-width: 100%;
+      line-height: 1.65;
+      word-break: break-word;
+    }
+
+    .preview-bubble p { margin: 0 0 12px; }
+    .preview-bubble ul, .preview-bubble ol { margin: 0 0 12px 24px; }
+    .preview-bubble blockquote {
+      margin: 0 0 12px;
+      padding-left: 12px;
+      border-left: 4px solid #8aa08f;
+      color: #39485b;
+    }
+    .preview-bubble code {
+      background: rgba(15, 23, 42, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+    }
+
+        @media (max-width: 1080px) {
+      .wafe-wrap.active { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 14px; }
+      .activity-row { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.7rem; }
+    }
+  
+#backToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  display: none;
+  z-index: 999;
+}
+#backToTop:hover { background: #1d4ed8; }
+
+</style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <h1><span aria-hidden="true">🤖</span> OTTO</h1>
+        <p>Omar's Teaching Workflow Tools</p>
+      </div>
+      <div class="anchor-nav">
+        <a href="#workflow" class="link-btn soft">✅ Workflow</a>
+        <a href="#emojis" class="link-btn soft">💡 Emojis</a>
+        <a href="#wafe" class="link-btn soft">💬 WhatsApp</a>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <section class="card" id="workflow">
+          <h2>✅ Teaching Workflow Tool</h2>
+
+          <div class="grid">
+            <div>
+              <label for="dateMode">Date</label>
+              <select id="dateMode">
+                <option value="tomorrow">Tomorrow's Date</option>
+                <option value="current">Current Date</option>
+                <option value="custom">Custom Date</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="customDate">Custom Date</label>
+              <input type="date" id="customDate" />
+            </div>
+
+            <div>
+              <label for="week">Week</label>
+              <select id="week"></select>
+            </div>
+
+            <div>
+              <label for="term">Term</label>
+              <select id="term">
+                <option>First</option>
+                <option>Second</option>
+                <option>Third</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <label for="topic">Topic</label>
+            <input type="text" id="topic" placeholder="Write the class topic" />
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Activities</h2>
+          <div id="activities" class="activities"></div>
+
+          <div class="buttons">
+            <button class="primary" id="copyBtn" type="button">Copy plan</button>
+            <button class="soft" id="previewBtn" type="button">Preview</button>
+            <button id="clearBtn" type="button">Clear</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Preview</h2>
+          <div id="output" class="output"></div>
+          <div id="status" class="status"></div>
+        </section>
+
+        <section class="card" id="emojis">
+          <h2>💡 Emoji shortcuts</h2>
+          <div class="buttons" id="emojiButtons"></div>
+          <div class="hint">Click an emoji to copy it instantly.</div>
+        </section>
+
+        <section class="card tool-card" id="wafe">
+          <div class="tool-header">
+            <div>
+              <h2 style="margin-bottom:4px;">💬 WAFE</h2>
+            </div>
+          </div>
+
+          <div class="buttons" style="margin-top:14px;">
+            <button class="wafe-btn" id="toggleWafeBtn" type="button">Open WAFE</button>
+            <a class="link-btn" id="waLink" href="#" target="_blank" rel="noreferrer">Share on WhatsApp</a>
+          </div>
+
+          <div class="wafe-wrap" id="wafeWrap">
+            <div class="wafe-pane">
+              <h3>Editor</h3>
+              <div class="toolbar">
+                <button type="button" onclick="wrapSelection('*')"><strong>Bold</strong></button>
+                <button type="button" onclick="wrapSelection('_')"><em>Italic</em></button>
+                <button type="button" onclick="wrapSelection('~')"><s>Strike</s></button>
+                <button type="button" onclick="wrapSelection('`')"><code>Code</code></button>
+                <button type="button" onclick="applyPrefix('> ')">Quote</button>
+                <button type="button" onclick="applyPrefix('- ')">List</button>
+                <button type="button" onclick="applyOrderedList()">Numbered List</button>
+              </div>
+
+              <div class="emoji-buttons" id="wafeEmojiButtons"></div>
+
+              <textarea id="editor" placeholder="Write or paste your WhatsApp message here...">Hello team,
+
+*Información Clase de Inglés*
+
+Estimados estudiantes, deseo compartir con uds
+Meeting at _3:00 p.m._
+
+> Bring updates
+
+1. Task one
+2. Task two
+
+`Code example`</textarea>
+
+              <div class="buttons">
+                <button class="primary" type="button" id="copyEditorBtn">Copy</button>
+                <button type="button" id="clearEditorBtn">Clear</button>
+              </div>
+            </div>
+
+            <div class="wafe-pane">
+              <h3>WhatsApp preview</h3>
+              <div class="preview-shell">
+                <div class="preview-bubble" id="preview"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+    </section>
+  </div>
+
+  <script>
+    const weekOptions = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh'];
+    const activityNames = ['Warm-up', 'Homework', 'Feedback on', 'Vocabulary', 'Grammar', 'Speaking', 'Reading', 'Writing', 'Assignment'];
+    const emojis = ['✅', '❌', '🔗', '🇬🇧', '⚠️', '🔄', '📌', '📖', '🎧', '📝', '🗣️', '🧩', '💡', '🐸'];
+    const wafeEmojis = ['🇬🇧', '✅', '❌', '🔗', '📢', '🔄', '⚠️', '📌', '👍', '🎧', '📖', '📝', '🗣️', '💡'];
+
+    const weekSelect = document.getElementById('week');
+    const activitiesWrap = document.getElementById('activities');
+    const emojiButtons = document.getElementById('emojiButtons');
+    const wafeEmojiButtons = document.getElementById('wafeEmojiButtons');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const waLink = document.getElementById('waLink');
+    const wafeWrap = document.getElementById('wafeWrap');
+    const toggleWafeBtn = document.getElementById('toggleWafeBtn');
+
+    weekOptions.forEach(week => {
+      const option = document.createElement('option');
+      option.value = week;
+      option.textContent = week;
+      weekSelect.appendChild(option);
+    });
+
+    activityNames.forEach((name, index) => {
+      const row = document.createElement('div');
+      row.className = 'activity-row';
+      row.innerHTML = `
+        <label class="activity-check">
+          <label class="switch">
+            <input type="checkbox" id="check-${index}">
+            <span class="slider"></span>
+          </label>
+          <span>${name}</span>
+        </label>
+        <input type="text" id="text-${index}" placeholder="Write ${name.toLowerCase()} details">
+      `;
+      activitiesWrap.appendChild(row);
+    });
+
+    emojis.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.className = 'soft emoji-btn';
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.addEventListener('click', async () => {
+        await copyText(emoji);
+        setStatus(`Copied emoji: ${emoji}`);
+      });
+      emojiButtons.appendChild(btn);
+    });
+
+    wafeEmojis.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-btn';
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.addEventListener('click', () => insertEmoji(emoji));
+      wafeEmojiButtons.appendChild(btn);
+    });
+
+    document.getElementById('previewBtn').addEventListener('click', () => {
+      refreshPlanPreview();
+      setStatus('Preview updated.');
+    });
+
+    function refreshPlanPreview() {
+      output.textContent = buildPlan();
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const text = buildPlan();
+      output.textContent = text;
+      await copyText(text);
+      setStatus('Class plan copied to the clipboard.');
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.getElementById('dateMode').value = 'tomorrow';
+      document.getElementById('customDate').value = '';
+      document.getElementById('week').selectedIndex = 0;
+      document.getElementById('term').selectedIndex = 0;
+      document.getElementById('topic').value = '';
+      activityNames.forEach((_, index) => {
+        document.getElementById(`check-${index}`).checked = false;
+        document.getElementById(`text-${index}`).value = '';
+      });
+      refreshPlanPreview();
+      setStatus('Form cleared.');
+    });
+
+    document.getElementById('copyEditorBtn').addEventListener('click', async () => {
+      await copyText(editor.value);
+      setStatus('WAFE text copied.');
+    });
+
+    document.getElementById('clearEditorBtn').addEventListener('click', () => {
+      editor.value = '';
+      updatePreview();
+      setStatus('WAFE editor cleared.');
+    });
+
+    toggleWafeBtn.addEventListener('click', () => {
+      if (wafeWrap.classList.contains('active')) {
+        wafeWrap.classList.remove('active');
+        toggleWafeBtn.textContent = 'Open WAFE';
+      } else {
+        openWafe();
+      }
+    });
+
+    function openWafe() {
+      wafeWrap.classList.add('active');
+      toggleWafeBtn.textContent = 'Hide WAFE';
+      if (!editor.value.trim()) editor.value = buildPlan();
+      updatePreview();
+    }
+
+    function getSelectedDate() {
+      const mode = document.getElementById('dateMode').value;
+      const custom = document.getElementById('customDate').value;
+      const now = new Date();
+      now.setHours(12, 0, 0, 0);
+
+      if (mode === 'current') return now;
+      if (mode === 'tomorrow') {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow;
+      }
+      if (custom) {
+        const [year, month, day] = custom.split('-').map(Number);
+        return new Date(year, month - 1, day, 12, 0, 0, 0);
+      }
+      return now;
+    }
+
+    function getOrdinal(n) {
+      if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+      switch (n % 10) {
+        case 1: return `${n}st`;
+        case 2: return `${n}nd`;
+        case 3: return `${n}rd`;
+        default: return `${n}th`;
+      }
+    }
+
+    function formatDate(date) {
+      const day = getOrdinal(date.getDate());
+      const month = date.toLocaleString('en-US', { month: 'long' });
+      const year = date.getFullYear();
+      return `${day} of ${month}, ${year}`;
+    }
+
+    function buildPlan() {
+      const date = formatDate(getSelectedDate());
+      const week = document.getElementById('week').value;
+      const term = document.getElementById('term').value;
+      const topic = document.getElementById('topic').value.trim() || '—';
+
+      const selectedActivities = activityNames
+        .map((name, index) => ({
+          name,
+          checked: document.getElementById(`check-${index}`).checked,
+          text: document.getElementById(`text-${index}`).value.trim()
+        }))
+        .filter(item => item.checked)
+        .map(item => `        ☐ ${item.name}: ${item.text || ' '}`);
+
+      const activityBlock = selectedActivities.length
+        ? selectedActivities.join('\n')
+        : '        ☐ No activities selected.';
+
+      return [
+        `📅 Date: ${date}`,
+        `🗂️ Week: ${week}`,
+        `📚 Term: ${term}`,
+        `🧠 Topic: ${topic}`,
+        `✏️ Activities:`,
+        activityBlock
+      ].join('\n');
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+    }
+
+    function setStatus(message) {
+      status.textContent = message;
+      setTimeout(() => {
+        if (status.textContent === message) status.textContent = '';
+      }, 2500);
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function renderInline(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      html = html.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+      html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
+      html = html.replace(/~([^~]+)~/g, '<s>$1</s>');
+      return html;
+    }
+
+    function parseBlocks(text) {
+      const lines = text.split('\n');
+      const blocks = [];
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+
+        if (/^\s*>\s?/.test(line)) {
+          const quote = [];
+          while (i < lines.length && /^\s*>\s?/.test(lines[i])) {
+            quote.push(lines[i].replace(/^\s*>\s?/, ''));
+            i++;
+          }
+          blocks.push({ type: 'quote', lines: quote });
+          continue;
+        }
+
+        if (/^\s*[-*]\s+/.test(line)) {
+          const ulItems = [];
+          while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+            ulItems.push(lines[i].replace(/^\s*[-*]\s+/, ''));
+            i++;
+          }
+          blocks.push({ type: 'ul', items: ulItems });
+          continue;
+        }
+
+        if (/^\s*\d+\.\s+/.test(line)) {
+          const olItems = [];
+          while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+            olItems.push(lines[i].replace(/^\s*\d+\.\s+/, ''));
+            i++;
+          }
+          blocks.push({ type: 'ol', items: olItems });
+          continue;
+        }
+
+        if (line.trim() === '') {
+          blocks.push({ type: 'space' });
+          i++;
+          continue;
+        }
+
+        const paragraph = [];
+        while (
+          i < lines.length &&
+          lines[i].trim() !== '' &&
+          !/^\s*>\s?/.test(lines[i]) &&
+          !/^\s*[-*]\s+/.test(lines[i]) &&
+          !/^\s*\d+\.\s+/.test(lines[i])
+        ) {
+          paragraph.push(lines[i]);
+          i++;
+        }
+        blocks.push({ type: 'p', text: paragraph.join('\n') });
+      }
+      return blocks;
+    }
+
+    function updatePreview() {
+      const text = editor.value;
+      const blocks = parseBlocks(text);
+      let html = '';
+
+      for (const block of blocks) {
+        if (block.type === 'space') {
+          html += '<div style="height:8px"></div>';
+        } else if (block.type === 'quote') {
+          let quoteHtml = '';
+          for (const line of block.lines) quoteHtml += `<div>${renderInline(line)}</div>`;
+          html += `<blockquote>${quoteHtml}</blockquote>`;
+        } else if (block.type === 'ul') {
+          html += `<ul>${block.items.map(item => `<li>${renderInline(item)}</li>`).join('')}</ul>`;
+        } else if (block.type === 'ol') {
+          html += `<ol>${block.items.map(item => `<li>${renderInline(item)}</li>`).join('')}</ol>`;
+        } else {
+          html += `<p>${renderInline(block.text).replace(/\n/g, '<br>')}</p>`;
+        }
+      }
+
+      preview.innerHTML = html || '<p>The preview will appear here...</p>';
+      waLink.href = 'https://wa.me/?text=' + encodeURIComponent(text);
+    }
+
+    function wrapSelection(token) {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      const selected = value.slice(start, end);
+
+      if (!selected) {
+        const insertText = token + 'text' + token;
+        editor.value = value.slice(0, start) + insertText + value.slice(end);
+        editor.focus();
+        editor.setSelectionRange(start + token.length, start + token.length + 4);
+      } else {
+        editor.value = value.slice(0, start) + token + selected + token + value.slice(end);
+        editor.focus();
+        editor.setSelectionRange(start + token.length, end + token.length);
+      }
+      updatePreview();
+    }
+
+    function normalizeLine(line) {
+      return line.replace(/^([>\-*]\s+|\d+\.\s+)/, '');
+    }
+
+    function applyPrefix(prefix) {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      const blockStart = value.lastIndexOf('\n', start - 1) + 1;
+      let blockEnd = value.indexOf('\n', end);
+      if (blockEnd === -1) blockEnd = value.length;
+
+      const chunk = value.slice(blockStart, blockEnd);
+      const updated = chunk.split('\n').map(line => {
+        if (!line.trim()) return line;
+        return prefix + normalizeLine(line);
+      }).join('\n');
+
+      editor.value = value.slice(0, blockStart) + updated + value.slice(blockEnd);
+      editor.focus();
+      editor.setSelectionRange(blockStart, blockStart + updated.length);
+      updatePreview();
+    }
+
+    function applyOrderedList() {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      const blockStart = value.lastIndexOf('\n', start - 1) + 1;
+      let blockEnd = value.indexOf('\n', end);
+      if (blockEnd === -1) blockEnd = value.length;
+
+      const chunk = value.slice(blockStart, blockEnd);
+      let counter = 1;
+      const updated = chunk.split('\n').map(line => {
+        if (!line.trim()) return line;
+        const clean = normalizeLine(line);
+        return `${counter++}. ${clean}`;
+      }).join('\n');
+
+      editor.value = value.slice(0, blockStart) + updated + value.slice(blockEnd);
+      editor.focus();
+      editor.setSelectionRange(blockStart, blockStart + updated.length);
+      updatePreview();
+    }
+
+    function insertEmoji(emoji) {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const value = editor.value;
+      editor.value = value.slice(0, start) + emoji + value.slice(end);
+      editor.focus();
+      editor.setSelectionRange(start + emoji.length, start + emoji.length);
+      updatePreview();
+    }
+
+    editor.addEventListener('input', updatePreview);
+
+    document.getElementById('dateMode').addEventListener('change', refreshPlanPreview);
+    document.getElementById('customDate').addEventListener('input', refreshPlanPreview);
+    document.getElementById('week').addEventListener('change', refreshPlanPreview);
+    document.getElementById('term').addEventListener('change', refreshPlanPreview);
+    document.getElementById('topic').addEventListener('input', refreshPlanPreview);
+    activityNames.forEach((_, index) => {
+      document.getElementById(`check-${index}`).addEventListener('change', refreshPlanPreview);
+      document.getElementById(`text-${index}`).addEventListener('input', refreshPlanPreview);
+    });
+
+    refreshPlanPreview();
+    updatePreview();
+  
+const backToTop = document.getElementById("backToTop");
+window.addEventListener("scroll", () => {
+  backToTop.style.display = window.scrollY > 200 ? "block" : "none";
+});
+backToTop.addEventListener("click", () => {
+  const el = document.getElementById("workflow");
+  if (el) el.scrollIntoView({behavior:"smooth"});
+  else window.scrollTo({top:0,behavior:"smooth"});
+});
+
+</script>
+<button id="backToTop" type="button">⬆️ Workflow</button>
+</body>
+</html>
